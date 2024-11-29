@@ -5,16 +5,22 @@ pipeline {
             agent any
             steps {
                 echo 'Clonando el repositorio de GitHub...'
-                git branch: 'main', 
-                    url: 'https://github.com/Alemat1108/WebGoat.git', 
-                    credentialsId: 'github-credentials', 
-                    shallow: true
+                // Configuración de Git para manejar grandes volúmenes de datos y conexiones persistentes
+                sh 'git config --global http.postBuffer 524288000'
+                sh 'git config --global core.compression -1'
+                sh 'git config --global http.postBuffer 157286400'
+                sh 'git config --global http.maxRequestBuffer 100M'
+                sh 'git config --global http.keepAlive true'
+                sh 'git config --global http.maxKeepAliveRequests 100'
+                retry(3) {
+                    git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat.git', credentialsId: 'github-credentials'
+                }
             }
         }
-        stage("Build & SonarQube analysis") {
+        stage("build & SonarQube analysis") {
             agent any
             steps {
-                withSonarQubeEnv('SONARQUBE') {
+                withSonarQubeEnv('sonarqube') {
                     sh 'mvn clean package sonar:sonar'
                 }
             }
