@@ -1,38 +1,22 @@
 pipeline {
-    agent any
-    tools {
-        maven 'maven-3.9.9'
-    }
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat'
+    agent any 
+    
+    stages { 
+        stage('SCM Checkout') {
+            steps{
+           git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat.git'
             }
         }
-        stage('Build') {
-            steps {
-                sh 'mvn clean package'
+        // run sonarqube test
+        stage('Run Sonarqube') {
+            environment {
+                scannerHome = tool 'Escaneo';
             }
-        }
-        stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'sonar-scanner'
-                }
+              withSonarQubeEnv(credentialsId: 'Secret text', installationName: 'sonarqube') {
+                sh "${scannerHome}/bin/sonar-scanner"
+              }
             }
-        }
-    }
-    post {
-        always {
-            junit '**/target/surefire-reports/*.xml'
-            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
-        }
-        success {
-            echo 'Pipeline succeeded!'
-        }
-        failure {
-            echo 'Pipeline failed.'
         }
     }
 }
-
