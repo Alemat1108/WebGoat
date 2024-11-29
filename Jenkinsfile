@@ -5,7 +5,7 @@ pipeline {
             agent any
             tools {
                 maven 'Maven' // Nombre de la instalación de Maven configurada en Jenkins
-                jdk 'JDK 17' // Usa el nombre del JDK configurado en Jenkins
+                jdk 'JDK 17' // Nombre del JDK configurado en Jenkins
             }
             steps {
                 withSonarQubeEnv('sonarqube') {
@@ -22,6 +22,15 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            echo 'Pipeline completada. Publicando resultados...'
+        }
+        failure {
+            echo 'La pipeline falló. Revisa los logs para más detalles.'
+        }
+    }
 }
+
 
 
