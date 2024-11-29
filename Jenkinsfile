@@ -6,7 +6,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/tu-usuario/tu-repositorio.git'
+                git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat'
             }
         }
         stage('Build') {
@@ -22,3 +22,17 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+            archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+        }
+        success {
+            echo 'Pipeline succeeded!'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
+}
+
