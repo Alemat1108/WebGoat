@@ -1,24 +1,39 @@
 pipeline {
     agent none
     stages {
+        stage("Clonar el repositorio") {
+            agent any
+            environment {
+                GIT_TIMEOUT = '60'
+            }
+            steps {
+                echo 'Clonando el repositorio de GitHub...'
+                git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat.git', credentialsId: 'github-credentials'
+            }
+        }
         stage("build & SonarQube analysis") {
             agent any
             steps {
-                // Configura el entorno de SonarQube. Asegúrate de que 'My SonarQube Server' sea correcto
-                withSonarQubeEnv('sonarqube') {
-                    // Ejecuta el comando Maven para construir y analizar el proyecto con SonarQube
+                withSonarQubeEnv('SONARQUBE') {
                     sh 'mvn clean package sonar:sonar'
                 }
             }
         }
         stage("Quality Gate") {
             steps {
-                // Establece un tiempo límite de espera de 1 hora para el Quality Gate
                 timeout(time: 1, unit: 'HOURS') {
-                    // Espera el resultado del Quality Gate y aborta la pipeline si no pasa
                     waitForQualityGate abortPipeline: true
                 }
             }
         }
     }
+    post {
+        always {
+            echo 'Pipeline completada. Publicando resultados...'
+        }
+        failure {
+            echo 'La pipeline falló. Revisa los logs para más detalles.'
+        }
+    }
 }
+
