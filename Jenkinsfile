@@ -1,37 +1,24 @@
 pipeline {
-    agent none
+    agent any
+    tools {
+        maven 'maven-3.8.1'
+    }
     stages {
-        stage("build & SonarQube analysis") {
-            agent any
-            tools {
-                maven 'Maven' // Nombre de la instalación de Maven configurada en Jenkins
-                jdk 'JDK 17' // Nombre exacto del JDK configurado en Jenkins
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/tu-usuario/tu-repositorio.git'
             }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
-                    sh 'mvn clean package sonar:sonar'
-                }
-            }
-        }
-        stage("Quality Gate") {
-            agent any
-            steps {
-                timeout(time: 1, unit: 'HOURS') {
-                    waitForQualityGate abortPipeline: true
+                    sh 'sonar-scanner'
                 }
             }
         }
     }
-    post {
-        always {
-            echo 'Pipeline completada. Publicando resultados...'
-        }
-        failure {
-            echo 'La pipeline falló. Revisa los logs para más detalles.'
-        }
-    }
-}
-
-
-
-
