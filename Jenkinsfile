@@ -1,7 +1,11 @@
 pipeline {
-    agent any 
+    agent any
     
-    stages { 
+    tools {
+        maven 'Maven' // Asegúrate de que esto coincida con el nombre de la instalación de Maven en Jenkins
+    }
+    
+    stages {
         stage('SCM Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat.git'
@@ -34,4 +38,5 @@ pipeline {
         }
     }
 }
+
 
