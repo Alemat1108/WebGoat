@@ -1,10 +1,15 @@
 pipeline {
-    agent any
+    agent any 
     
     stages { 
         stage('SCM Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
             }
         }
         stage('Run Sonarqube') {
@@ -19,6 +24,7 @@ pipeline {
                             -Dsonar.projectKey=WebGoat \
                             -Dsonar.projectName=WebGoat \
                             -Dsonar.sources=src/main/java \
+                            -Dsonar.java.binaries=target/classes \
                             -Dsonar.host.url=http://172.25.93.19:9000 \
                             -Dsonar.login=${SONAR_TOKEN}
                         """
@@ -28,3 +34,4 @@ pipeline {
         }
     }
 }
+
