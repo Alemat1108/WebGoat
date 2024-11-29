@@ -1,5 +1,5 @@
 pipeline {
-    agent any 
+    agent any
     
     stages { 
         stage('SCM Checkout') {
@@ -9,18 +9,20 @@ pipeline {
         }
         stage('Run Sonarqube') {
             environment {
-                scannerHome = tool 'Escaneo';
+                scannerHome = tool 'Escaneo'
             }
             steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh """
-                        ${scannerHome}/bin/sonar-scanner \
-                        -Dsonar.projectKey=WebGoat \
-                        -Dsonar.projectName=WebGoat \
-                        -Dsonar.sources=src/main/java \
-                        -Dsonar.host.url=http://172.25.93.19:9000 \
-                        -Dsonar.login=${sonarqube}
-                    """
+                withCredentials([string(credentialsId: 'sonarqube', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('sonarqube') {
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=WebGoat \
+                            -Dsonar.projectName=WebGoat \
+                            -Dsonar.sources=src/main/java \
+                            -Dsonar.host.url=http://172.25.93.19:9000 \
+                            -Dsonar.login=${SONAR_TOKEN}
+                        """
+                    }
                 }
             }
         }
