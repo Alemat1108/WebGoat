@@ -5,7 +5,7 @@ pipeline {
             agent any
             tools {
                 maven 'Maven' // Nombre de la instalación de Maven configurada en Jenkins
-                jdk 'JDK 17' // Nombre del JDK configurado en Jenkins
+                jdk 'JDK 17' // Nombre exacto del JDK configurado en Jenkins
             }
             steps {
                 withSonarQubeEnv('sonarqube') {
@@ -31,6 +31,7 @@ pipeline {
         }
     }
 }
+
 
 
 
