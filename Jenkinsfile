@@ -19,7 +19,7 @@ pipeline {
                         -Dsonar.projectName=WebGoat \
                         -Dsonar.sources=src/main/java \
                         -Dsonar.host.url=http://172.25.93.19:9000 \
-                        -Dsonar.login=${SONAR_TOKEN}
+                        -Dsonar.login=${sonarqube-token}
                     """
                 }
             }
