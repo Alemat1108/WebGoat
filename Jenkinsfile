@@ -13,7 +13,7 @@ pipeline {
                 scannerHome = tool 'Escaneo';
             }
             steps {
-              withSonarQubeEnv(credentialsId: 'Secret text', installationName: 'sonarqube') {
+              withSonarQubeEnv(credentialsId: 'sonarqube-token', installationName: 'sonarqube') {
                 sh "${scannerHome}/bin/sonar-scanner"
               }
             }
