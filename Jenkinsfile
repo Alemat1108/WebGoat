@@ -3,15 +3,15 @@ pipeline {
     stages {
         stage("Clonar el repositorio") {
             agent any
-            environment {
-                GIT_TIMEOUT = '60'
-            }
             steps {
                 echo 'Clonando el repositorio de GitHub...'
-                git branch: 'main', url: 'https://github.com/Alemat1108/WebGoat.git', credentialsId: 'github-credentials'
+                git branch: 'main', 
+                    url: 'https://github.com/Alemat1108/WebGoat.git', 
+                    credentialsId: 'github-credentials', 
+                    shallow: true
             }
         }
-        stage("build & SonarQube analysis") {
+        stage("Build & SonarQube analysis") {
             agent any
             steps {
                 withSonarQubeEnv('SONARQUBE') {
@@ -36,4 +36,3 @@ pipeline {
         }
     }
 }
-
