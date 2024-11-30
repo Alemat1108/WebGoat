@@ -9,10 +9,19 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Compile') {
             steps {
-                // Compila el proyecto
-                sh './mvnw clean install'
+                script {
+                    sh '''
+                    # Limpia los archivos compilados anteriores
+                    rm -rf out
+                    mkdir out
+                    
+                    # Compila los archivos Java
+                    find src -name "*.java" > sources.txt
+                    javac -d out @sources.txt
+                    '''
+                }
             }
         }
 
