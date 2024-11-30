@@ -3,7 +3,7 @@ pipeline {
 
     tools {
         // Define the SonarQube scanner tool
-        sonarQube 'Escaneo'
+        tool name: 'Escaneo', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
     }
 
     stages {
