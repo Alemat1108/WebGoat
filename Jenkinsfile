@@ -18,12 +18,12 @@ pipeline {
 
         stage('SonarQube Analysis') {
             environment {
-                scannerHome = tool 'SonarQubeScanner'
+                scannerHome = tool 'Escaneo' // Utiliza 'Escaneo' como el nombre del SonarQube Scanner
             }
             steps {
                 // Ejecuta el análisis de SonarQube
                 withSonarQubeEnv('Escaneo') {
-                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my_project -Dsonar.sources=src/main/java -Dsonar.host.url=http://your-sonarqube-url -Dsonar.login=tu-token-real"
+                    sh "${scannerHome}/bin/sonar-scanner -Dproject.settings=sonar-scanner.properties"
                 }
             }
         }
@@ -38,4 +38,3 @@ pipeline {
         }
     }
 }
-
