@@ -1,47 +1,42 @@
 pipeline {
     agent any
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '5'))
+
+    tools {
+        // Define the SonarQube scanner tool
+        sonarQube 'Escaneo'
     }
+
     stages {
-        stage('Compile') {
+        stage('Checkout') {
             steps {
-                script {
-                    sh '''
-                    # Limpia los archivos compilados anteriores
-                    rm -rf out
-                    mkdir out
-                    
-                    # Compila los archivos Java
-                    javac -d out src/main/java/**/*.java
-                    '''
+                // Descarga el código del repositorio
+                git url: 'https://github.com/Alemat1108/WebGoat.git', branch: 'main'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Compila el proyecto
+                sh './mvnw clean install'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                // Ejecuta el análisis de SonarQube
+                withSonarQubeEnv('Escaneo') {
+                    sh './mvnw sonar:sonar'
                 }
             }
         }
-        stage('Run Tests') {
+
+        stage('Quality Gate') {
             steps {
-                script {
-                    sh '''
-                    # Ejecuta pruebas o valida el proyecto manualmente
-                    java -cp out org.example.MainClass # Reemplaza MainClass por tu clase principal
-                    '''
-                }
-            }
-        }
-        stage('Scan with SonarQube') {
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh '''
-                    sonar-scanner \
-                        -Dsonar.projectKey=my_project \
-                        -Dsonar.sources=src/main/java \
-                        -Dsonar.host.url=http://172.25.93.19:9000 \
-                        -Dsonar.login=sonarqube
-                    '''
+                // Espera a que el análisis de SonarQube se complete y verifica el estado de la puerta de calidad
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
     }
 }
-
-
