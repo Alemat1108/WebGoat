@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        // Define the SonarQube scanner tool
-        tool name: 'Escaneo', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-    }
-
     stages {
         stage('Checkout') {
             steps {
@@ -22,10 +17,13 @@ pipeline {
         }
 
         stage('SonarQube Analysis') {
+            environment {
+                scannerHome = tool 'SonarQubeScanner'
+            }
             steps {
                 // Ejecuta el análisis de SonarQube
                 withSonarQubeEnv('Escaneo') {
-                    sh './mvnw sonar:sonar'
+                    sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=my_project -Dsonar.sources=src/main/java -Dsonar.host.url=http://your-sonarqube-url -Dsonar.login=tu-token-real"
                 }
             }
         }
@@ -40,3 +38,4 @@ pipeline {
         }
     }
 }
+
