@@ -35,8 +35,8 @@ pipeline {
                     sonar-scanner \
                         -Dsonar.projectKey=my_project \
                         -Dsonar.sources=src/main/java \
-                        -Dsonar.host.url=http://your-sonarqube-url \
-                        -Dsonar.login=your-token
+                        -Dsonar.host.url=http://172.25.93.19:9000 \
+                        -Dsonar.login=sonarqube
                     '''
                 }
             }
