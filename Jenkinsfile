@@ -28,6 +28,20 @@ pipeline {
                 }
             }
         }
-        stage('Scan with SonarQube
+        stage('Scan with SonarQube') {
+            steps {
+                withSonarQubeEnv('sonarqube') {
+                    sh '''
+                    sonar-scanner \
+                        -Dsonar.projectKey=my_project \
+                        -Dsonar.sources=src/main/java \
+                        -Dsonar.host.url=http://your-sonarqube-url \
+                        -Dsonar.login=your-token
+                    '''
+                }
+            }
+        }
+    }
+}
 
 
